@@ -304,9 +304,9 @@ nav a.active { color: var(--pink); }
 /* ── BADGES ──────────────────────────────────────────────────
    Badges are the small labels in the top-left corner of cards.
    There are 3 badge types:
-     NEW  → pink  → set isNew: true  on a game
+     NEW  → pink   → set isNew: true  on a game
      HOT  → orange → set isPop: true  on a game
-     SFC  → blue  → set isSfc: true  on a game
+     SFC  → blue   → set isSfc: true  on a game (purely visual, does NOT block the game)
 
    STACKING ORDER when multiple badges are on one card:
      - NEW always renders first (top position, left: 7px, top: 7px)
@@ -340,7 +340,7 @@ nav a.active { color: var(--pink); }
 .badge-popular.has-new { top: 30px; }
 
 /* SFC badge — blue, shows on games with isSfc: true
-   "SFC" = Soon / Coming Soon
+   This is now purely a visual tag — it does NOT dim or block the card.
    To change the label text, find "SFC" in renderGrid() below.
    To change the color: edit background: #1a6fff below. */
 .badge-sfc {
@@ -354,10 +354,6 @@ nav a.active { color: var(--pink); }
 /* Push SFC down depending on which other badges are present */
 .badge-sfc.has-new  { top: 30px; }   /* NEW is above it */
 .badge-sfc.has-both { top: 53px; }   /* NEW and HOT are both above it */
-
-/* SFC cards are dimmed and not clickable — game isn't out yet */
-.game-card.is-sfc { opacity: 0.55; cursor: not-allowed; }
-.game-card.is-sfc .play-overlay { display: none; }
 
 /* ── FOOTER ──────────────────────────────────────────────────
    Bottom bar. To change text, find <footer> in the HTML.
@@ -503,9 +499,9 @@ footer b { color: #FF2D8A66; }
      isPop   — true or false. Shows orange "HOT" badge.
                 Independent from isNew — a game can have both badges.
 
-     isSfc   — true or false. Shows blue "SFC" (Soon) badge.
-                SFC cards are dimmed and NOT clickable.
-                Set to false and fill in the url when the game launches.
+     isSfc   — true or false. Shows blue "SFC" badge.
+                This is purely a visual indicator — the card is fully
+                clickable and looks normal. It does NOT dim or block the game.
 
    ─────────────────────────────────────────────────────────────
    HOW TO ADD A GAME:
@@ -527,11 +523,6 @@ footer b { color: #FF2D8A66; }
    HOW TO CHANGE A THUMBNAIL IMAGE:
      Replace img:null with img:"YOUR_IMAGE_URL"
      Example: img:"https://i.imgur.com/abc123.png"
-
-   HOW TO MARK A GAME AS COMING SOON:
-     Set isSfc:true and you can leave url as "" or "#".
-     The card will be dimmed and clicking it does nothing.
-     When the game is ready: set isSfc:false and fill in the real url.
 ============================================================ */
 const games = [
   { id:1,  name:"2048",           emoji:"🔢", img:"https://github.com/pinkgame12/pinkgame12.github.io/blob/main/imgs/2048-original-pc-full-version.jpg?raw=true", bg:"#130810", cat:"puzzle",   url:"https://schoolflashcards5.github.io/2048/",             isNew:false, isPop:true,  isSfc:true },
@@ -553,10 +544,7 @@ const games = [
   { id:17, name:"Cut the Rope",      emoji:"🪢", img:null, bg:"#0a100a", cat:"puzzle",   url:"https://www.cuttherope.net",                            isNew:false, isPop:false, isSfc:false },
   { id:18, name:"Tanki Online",      emoji:"🛡️", img:null, bg:"#0e0c08", cat:"action",   url:"https://tankionline.com",                               isNew:false,  isPop:false, isSfc:false },
   { id:19, name:"Uno Online",        emoji:"🃏", img:null, bg:"#100a0a", cat:"arcade",   url:"https://poki.com/en/g/uno-online",                      isNew:false,  isPop:false, isSfc:false },
-  { id:20, name:"Subway Surfers",    emoji:"🏃", img:null, bg:"#0a0e12", cat:"arcade",   url:"https://poki.com/en/g/subway-surfers",                  isNew:false, isPop:true,  isSfc:false },
-  /* ── EXAMPLE SFC GAME — delete this when you add a real one ──
-  { id:21, name:"My New Game",       emoji:"🎮", img:null, bg:"#0a0a14", cat:"action",   url:"",                                                      isNew:false, isPop:false, isSfc:true  },
-  */
+  { id:20, name:"Subway Surfers",    emoji:"🏃", img:null, bg:"#0a0e12", cat:"arcade",   url:"https://poki.com/en/g/subway-surfers",                  isNew:false, isPop:true,  isSfc:false }
 ];
 
 /* ── SORT ORDER ─────────────────────────────────────────────
@@ -592,9 +580,8 @@ function filterGames() {
    BADGES: edit the text inside the quotes to change badge labels.
      'NEW'  → the label on isNew cards
      'HOT'  → the label on isPop cards
-     'SFC'  → the label on isSfc cards
-   SFC cards get class "is-sfc" which makes them dim and unclickable
-   (see CSS .game-card.is-sfc above). */
+     'SFC'  → the label on isSfc cards (purely visual, does not block the game)
+*/
 function renderGrid() {
   let filtered = games.filter(g =>
     (currentCat === 'all' || g.cat === currentCat) &&
@@ -624,13 +611,9 @@ function renderGrid() {
       ? `<img src="${g.img}" alt="${g.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">`
       : `<span style="position:relative;z-index:1;">${g.emoji}</span>`;
 
-    /* SFC cards get class="is-sfc" (dimmed, not clickable).
-       Normal cards use onclick to open the game URL in a new tab. */
-    const cardClass = g.isSfc ? 'game-card is-sfc' : 'game-card';
-    const clickAttr = g.isSfc ? '' : `onclick="openGame(${g.id})"`;
-
+    /* All cards are normal game-cards — SFC no longer blocks anything */
     return `
-    <div class="${cardClass}" ${clickAttr}>
+    <div class="game-card" onclick="openGame(${g.id})">
       ${newBadge}${popBadge}${sfcBadge}
       <div class="thumb" style="background: radial-gradient(circle at 35% 35%, ${g.bg}, #0a0a0a); position:relative;">
         ${thumb}
@@ -645,10 +628,10 @@ function renderGrid() {
 }
 
 /* openGame — opens the game URL in a new browser tab.
-   You don't need to edit this. */
+   SFC no longer blocks — all games are clickable. */
 function openGame(id) {
   const g = games.find(x => x.id === id);
-  if (!g || g.isSfc) return;
+  if (!g) return;
   window.open(g.url, '_blank');
 }
 
