@@ -218,48 +218,6 @@
     top: 30px;
   }
 
-  /* MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: #000000cc; z-index: 100;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(8px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    width: 95vw; max-width: 1100px; height: 90vh;
-    background: #0e0e0e; border: 1px solid var(--pink);
-    border-radius: 10px; overflow: hidden;
-    display: flex; flex-direction: column;
-    box-shadow: 0 0 60px #FF2D8A30;
-    animation: popIn 0.22s ease;
-  }
-  @keyframes popIn {
-    from { transform: scale(0.94) translateY(8px); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-  }
-  .modal-header {
-    display: flex; align-items: center;
-    padding: 11px 18px; background: #090909;
-    border-bottom: 1px solid #1a1a1a; gap: 12px;
-  }
-  .modal-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.78rem; font-weight: 700;
-    letter-spacing: 2.5px; color: var(--pink);
-    text-transform: uppercase; flex: 1;
-  }
-  .modal-close {
-    background: #1a1a1a; border: 1px solid #252525;
-    color: #666; width: 30px; height: 30px;
-    border-radius: 4px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; font-family: 'Rajdhani', sans-serif;
-    font-weight: 700; transition: all 0.15s;
-  }
-  .modal-close:hover { border-color: var(--pink); color: var(--pink); }
-  .modal iframe { flex: 1; width: 100%; border: none; background: #000; }
-
   /* FOOTER */
   footer {
     position: relative; z-index: 5;
@@ -318,40 +276,30 @@
   <div class="game-grid" id="gameGrid"></div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Game</div>
-      <button class="modal-close" onclick="closeGame()">✕</button>
-    </div>
-    <iframe id="gameFrame" src="" allowfullscreen></iframe>
-  </div>
-</div>
-
 <footer><b>PINKGAME</b> &nbsp;—&nbsp; All games free to play</footer>
 
 <script>
 const games = [
-  { id:1,  name:"2048",              emoji:"🔢", bg:"#130810", cat:"puzzle",   url:"https://gabrielecirulli.github.io/2048/",                isNew:false, isPop:true  },
-  { id:2,  name:"Slope",             emoji:"🔴", bg:"#0f0812", cat:"action",   url:"https://slope-game.github.io/",                         isNew:false, isPop:true  },
-  { id:3,  name:"Shell Shockers",    emoji:"🥚", bg:"#100c0a", cat:"action",   url:"https://shellshock.io",                                 isNew:false, isPop:false },
-  { id:4,  name:"Krunker.io",        emoji:"🎯", bg:"#0a0a10", cat:"io",       url:"https://krunker.io",                                    isNew:false, isPop:true  },
-  { id:5,  name:"Slither.io",        emoji:"🐍", bg:"#0a100a", cat:"io",       url:"https://slither.io",                                    isNew:false, isPop:true  },
-  { id:6,  name:"Agar.io",           emoji:"🫧", bg:"#0a0e14", cat:"io",       url:"https://agar.io",                                       isNew:false, isPop:true  },
-  { id:7,  name:"Paper.io 2",        emoji:"📄", bg:"#100a0a", cat:"io",       url:"https://paper-io.com",                                  isNew:false, isPop:false },
-  { id:8,  name:"Minesweeper",       emoji:"💣", bg:"#0d0d0d", cat:"puzzle",   url:"https://minesweeperonline.com",                         isNew:false, isPop:false },
-  { id:9,  name:"Cookie Clicker",    emoji:"🍪", bg:"#120e08", cat:"strategy", url:"https://orteil.dashnet.org/cookieclicker/",             isNew:true,  isPop:true  },
-  { id:10, name:"Retro Bowl",        emoji:"🏈", bg:"#0e1008", cat:"arcade",   url:"https://retrobowl.me",                                  isNew:true,  isPop:false },
-  { id:11, name:"Wordle",            emoji:"🟩", bg:"#0a0e0a", cat:"puzzle",   url:"https://www.nytimes.com/games/wordle/index.html",        isNew:false, isPop:true  },
-  { id:12, name:"Drift Boss",        emoji:"🚗", bg:"#100a0e", cat:"action",   url:"https://driftboss.io",                                  isNew:false, isPop:false },
-  { id:13, name:"Geometry Dash",     emoji:"🟥", bg:"#100808", cat:"arcade",   url:"https://geometrydashsubzero.com",                       isNew:false, isPop:true  },
-  { id:14, name:"Tetris",            emoji:"🧱", bg:"#0a0a12", cat:"arcade",   url:"https://tetris.com/play-tetris",                        isNew:false, isPop:true  },
-  { id:15, name:"Minecraft Classic", emoji:"⛏️", bg:"#0d0e08", cat:"action",   url:"https://classic.minecraft.net",                         isNew:false, isPop:true  },
-  { id:16, name:"Chess",             emoji:"♟️", bg:"#0d0d0d", cat:"strategy", url:"https://lichess.org",                                   isNew:false, isPop:false },
-  { id:17, name:"Cut the Rope",      emoji:"🪢", bg:"#0a100a", cat:"puzzle",   url:"https://www.cuttherope.net",                            isNew:false, isPop:false },
-  { id:18, name:"Tanki Online",      emoji:"🛡️", bg:"#0e0c08", cat:"action",   url:"https://tankionline.com",                               isNew:true,  isPop:false },
-  { id:19, name:"Uno Online",        emoji:"🃏", bg:"#100a0a", cat:"arcade",   url:"https://poki.com/en/g/uno-online",                      isNew:true,  isPop:false },
-  { id:20, name:"Subway Surfers",    emoji:"🏃", bg:"#0a0e12", cat:"arcade",   url:"https://poki.com/en/g/subway-surfers",                  isNew:false, isPop:true  },
+  { id:1,  name:"2048",              emoji:"🔢", img:null, bg:"#130810", cat:"puzzle",   url:"https://gabrielecirulli.github.io/2048/",                isNew:false, isPop:true  },
+  { id:2,  name:"Slope",             emoji:"🔴", img:null, bg:"#0f0812", cat:"action",   url:"https://slope-game.github.io/",                         isNew:false, isPop:true  },
+  { id:3,  name:"Shell Shockers",    emoji:"🥚", img:null, bg:"#100c0a", cat:"action",   url:"https://shellshock.io",                                 isNew:false, isPop:false },
+  { id:4,  name:"Krunker.io",        emoji:"🎯", img:null, bg:"#0a0a10", cat:"io",       url:"https://krunker.io",                                    isNew:false, isPop:true  },
+  { id:5,  name:"Slither.io",        emoji:"🐍", img:null, bg:"#0a100a", cat:"io",       url:"https://slither.io",                                    isNew:false, isPop:true  },
+  { id:6,  name:"Agar.io",           emoji:"🫧", img:null, bg:"#0a0e14", cat:"io",       url:"https://agar.io",                                       isNew:false, isPop:true  },
+  { id:7,  name:"Paper.io 2",        emoji:"📄", img:null, bg:"#100a0a", cat:"io",       url:"https://paper-io.com",                                  isNew:false, isPop:false },
+  { id:8,  name:"Minesweeper",       emoji:"💣", img:null, bg:"#0d0d0d", cat:"puzzle",   url:"https://minesweeperonline.com",                         isNew:false, isPop:false },
+  { id:9,  name:"Cookie Clicker",    emoji:"🍪", img:null, bg:"#120e08", cat:"strategy", url:"https://orteil.dashnet.org/cookieclicker/",             isNew:true,  isPop:true  },
+  { id:10, name:"Retro Bowl",        emoji:"🏈", img:null, bg:"#0e1008", cat:"arcade",   url:"https://retrobowl.me",                                  isNew:true,  isPop:false },
+  { id:11, name:"Wordle",            emoji:"🟩", img:null, bg:"#0a0e0a", cat:"puzzle",   url:"https://www.nytimes.com/games/wordle/index.html",        isNew:false, isPop:true  },
+  { id:12, name:"Drift Boss",        emoji:"🚗", img:null, bg:"#100a0e", cat:"action",   url:"https://driftboss.io",                                  isNew:false, isPop:false },
+  { id:13, name:"Geometry Dash",     emoji:"🟥", img:null, bg:"#100808", cat:"arcade",   url:"https://geometrydashsubzero.com",                       isNew:false, isPop:true  },
+  { id:14, name:"Tetris",            emoji:"🧱", img:null, bg:"#0a0a12", cat:"arcade",   url:"https://tetris.com/play-tetris",                        isNew:false, isPop:true  },
+  { id:15, name:"Minecraft Classic", emoji:"⛏️", img:null, bg:"#0d0e08", cat:"action",   url:"https://classic.minecraft.net",                         isNew:false, isPop:true  },
+  { id:16, name:"Chess",             emoji:"♟️", img:null, bg:"#0d0d0d", cat:"strategy", url:"https://lichess.org",                                   isNew:false, isPop:false },
+  { id:17, name:"Cut the Rope",      emoji:"🪢", img:null, bg:"#0a100a", cat:"puzzle",   url:"https://www.cuttherope.net",                            isNew:false, isPop:false },
+  { id:18, name:"Tanki Online",      emoji:"🛡️", img:null, bg:"#0e0c08", cat:"action",   url:"https://tankionline.com",                               isNew:true,  isPop:false },
+  { id:19, name:"Uno Online",        emoji:"🃏", img:null, bg:"#100a0a", cat:"arcade",   url:"https://poki.com/en/g/uno-online",                      isNew:true,  isPop:false },
+  { id:20, name:"Subway Surfers",    emoji:"🏃", img:null, bg:"#0a0e12", cat:"arcade",   url:"https://poki.com/en/g/subway-surfers",                  isNew:false, isPop:true  },
 ];
 
 let currentCat = 'all', searchTerm = '';
@@ -373,17 +321,19 @@ function renderGrid() {
     (currentCat === 'all' || g.cat === currentCat) &&
     g.name.toLowerCase().includes(searchTerm)
   );
-  // NEW games always float to top
   filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
   document.getElementById('sectionCount').textContent = filtered.length;
   document.getElementById('gameGrid').innerHTML = filtered.map(g => {
-    const newBadge  = g.isNew  ? '<div class="badge-new">NEW</div>'                                   : '';
-    const popBadge  = g.isPop  ? `<div class="badge-popular${g.isNew ? ' has-new' : ''}">HOT</div>`  : '';
+    const newBadge = g.isNew ? '<div class="badge-new">NEW</div>' : '';
+    const popBadge = g.isPop ? `<div class="badge-popular${g.isNew ? ' has-new' : ''}">HOT</div>` : '';
+    const thumb = g.img
+      ? `<img src="${g.img}" alt="${g.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">`
+      : `<span style="position:relative;z-index:1;">${g.emoji}</span>`;
     return `
     <div class="game-card" onclick="openGame(${g.id})">
       ${newBadge}${popBadge}
-      <div class="thumb" style="background: radial-gradient(circle at 35% 35%, ${g.bg}, #0a0a0a);">
-        <span style="position:relative;z-index:1;">${g.emoji}</span>
+      <div class="thumb" style="background: radial-gradient(circle at 35% 35%, ${g.bg}, #0a0a0a); position:relative;">
+        ${thumb}
         <div class="play-overlay"><div class="play-btn">▶</div></div>
       </div>
       <div class="info">
@@ -397,20 +347,7 @@ function renderGrid() {
 function openGame(id) {
   const g = games.find(x => x.id === id);
   if (!g) return;
-  document.getElementById('modalTitle').textContent = g.name;
-  document.getElementById('gameFrame').src = g.url;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeGame() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.getElementById('gameFrame').src = '';
-  document.body.style.overflow = '';
-}
-
-function closeModal(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeGame();
+  window.open(g.url, '_blank');
 }
 
 renderGrid();
